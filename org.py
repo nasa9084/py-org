@@ -457,6 +457,17 @@ class Org(object):
         if self.bquote_flg:
             raise NestingNotValidError
 
+    def _is_deeper(self, cls, depth):
+        if isinstance(self.current, cls):
+            return depth > self.current.depth
+        else:
+            return False
+
+    def _is_shallower(self, cls, depth):
+        if isinstance(self.current, cls):
+            return depth < self.current.depth
+        else:
+            return False
 
     def _add_heading_node(self, heading):
         while isinstance(self.current, Heading) and self.current.depth >= heading.depth:
@@ -465,12 +476,12 @@ class Org(object):
         self.current = heading
 
     def _add_list_node(self, m, listclass=List):
-        if ((isinstance(self.current, listclass) and len(m.group('depth')) > self.current.depth) or
-            not isinstance(self.current, listclass)):
+        depth = len(m.group('depth'))
+        if self._is_deeper(listclass, depth) or not isinstance(self.current, listclass):
             listnode = listclass(depth=len(m.group('depth')))
             self.current.append(listnode)
             self.current = listnode
-        while isinstance(self.current, listclass) and len(m.group('depth')) < self.current.depth:
+        while self._is_shallower(listclass, depth):
             self.current = self.current.parent
         self.current.append(ListItem(m.group('item')))
 
@@ -482,11 +493,8 @@ class Org(object):
 
     def _add_dlist_node(self, m):
         is_definitionlist = isinstance(self.current, DefinitionList)
-        if is_definitionlist:
-            is_deeper = len(m.group('depth')) > self.current.depth
-        else:
-            is_deeper = False
-        if (is_definitionlist and is_deeper) or not is_definitionlist:
+        depth = len(m.group('depth'))
+        if self._is_deeper(DefinitionList, depth) or not is_definitionlist:
             listnode = DefinitionList(depth=len(m.group('depth')))
             self.current.append(listnode)
             self.current = listnode
