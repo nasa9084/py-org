@@ -16,7 +16,7 @@ class Syntax(object):
     QUOTE_END = r'#END_QUOTE$'
     ORDERED_LIST = r'(?P<depth>\s*)\d+(\.|\))\s+(?P<item>.+)$'
     UNORDERED_LIST = r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+)$'
-    DEFINITION_LIST = r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+?)\s*::\s*(?P<description>.+)$'
+    DEF_LIST = r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+?)\s*::\s*(?P<desc>.+)$'
     TABLE_ROW = r'\s*\|(?P<cells>(.+\|)+)s*$'
 
 
@@ -394,7 +394,7 @@ class Org(object):
         'blockquote_end': compile(Syntax.QUOTE_END),
         'orderedlist': compile(Syntax.ORDERED_LIST),
         'unorderedlist': compile(Syntax.UNORDERED_LIST),
-        'definitionlist': compile(Syntax.DEFINITION_LIST),
+        'definitionlist': compile(Syntax.DEF_LIST),
         'tablerow': compile(Syntax.TABLE_ROW),
     }
 
@@ -511,7 +511,7 @@ class Org(object):
                len(m.group('depth')) < self.current.depth):
             self.current = self.current.parent
         self.current.append(
-            DefinitionListItem(m.group('item'), m.group('description')))
+            DefinitionListItem(m.group('item'), m.group('desc')))
 
     def _add_tablerow(self, m):
         cells = [c for c in m.group('cells').split('|') if c != '']
