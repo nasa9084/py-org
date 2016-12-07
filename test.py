@@ -2,8 +2,8 @@ import nose
 from nose.tools import eq_, raises
 from unittest import TestCase
 
-from org import NestingNotValidError
-from org import Org, org_to_html
+from pyorg.org import NestingNotValidError
+from pyorg.org import Org, org_to_html
 
 class TestOrg(TestCase):
     def test_org(self):
