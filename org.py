@@ -476,8 +476,9 @@ class Org(object):
         self.current = heading
 
     def _add_list_node(self, m, listclass=List):
+        is_listclass = isinstance(self.current, listclass)
         depth = len(m.group('depth'))
-        if self._is_deeper(listclass, depth) or not isinstance(self.current, listclass):
+        if self._is_deeper(listclass, depth) or not is_listclass:
             listnode = listclass(depth=len(m.group('depth')))
             self.current.append(listnode)
             self.current = listnode
