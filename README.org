@@ -1,2 +1,109 @@
 * py-org
 The org-mode parser for python
+
+** Supported Feature
+This parser support org-mode syntaxes below.
+
+*** Headings
+#+BEGIN_SRC org
+* Heading Level 1
+** Heading Level 2
+*** Heading Level 3
+**** Heading Level 4
+***** Heading Level 5
+****** Heading Level 6
+#+END_SRC
+
+*** HyperLink
+#+BEGIN_SRC org
+[[http://example.com][Link Title]]
+[[https://example.com][Link Title]]
+[[http://example.com]]
+[[https://example.com]]
+#+END_SRC
+
+*** Image
+#+BEGIN_SRC org
+[[image path]]
+#+END_SRC
+
+*** Styling
+**** Bold
+#+BEGIN_SRC org
+*bold text*
+#+END_SRC
+
+**** Italic
+#+BEGIN_SRC org
+/italic text/
+#+END_SRC
+
+**** Underlined
+#+BEGIN_SRC org
+_underlined text_
+#+END_SRC
+
+**** Line Through
+#+BEGIN_SRC org
++line-through text+
+#+END_SRC
+
+**** Inline-Code
+#+BEGIN_SRC org
+=inline code=
+#+END_SRC
+
+**** Monospace Text
+#+BEGIN_SRC org
+~monospace text~
+#+END_SRC
+
+*** Blockquote
+#+BEGIN_SRC org
+,#+BEGIN_QUOTE
+quoted text without cite
+,#+END_QUOTE
+
+,#+BEGIN_QUOTE: cite
+quoted text with cite
+,#+END_QUOTE
+#+END_SRC
+
+*** Lists
+**** Ordered List
+#+BEGIN_SRC org
+1. hoge
+2. fuga
+3. piyo
+  1) foo
+  2) bar
+  3) baz
+#+END_SRC
+
+**** UnOrdered List
+#+BEGIN_SRC org
+- hoge
+- fuga
+- piyo
+  + foo
+  + bar
+  + baz
+#+END_SRC
+
+**** Definition List
+#+BEGIN_SRC org
+- hoge :: hoge is hoge
+- fuga :: fuga is fuga
+- piyo :: piyo is piyo
+  + foo :: foo is foo
+  + bar :: bar is bar
+  + baz :: baz is baz
+#+END_SRC
+  
+
+*** Table
+#+BEGIN_SRC org
+| row1-1 | row1-2 | row1-3 |
+| row2-1 | row2-2 | row2-3 |
+| row3-1 | row3-2 | row3-3 |
+#+END_SRC
