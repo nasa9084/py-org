@@ -488,7 +488,8 @@ class Org(object):
             self.current = listnode
         while isinstance(self.current, DefinitionList) and len(m.group('depth')) < self.current.depth:
             self.current = self.current.parent
-        self.current.append(DefinitionListItem(m.group('item'), m.group('description')))
+        self.current.append(
+            DefinitionListItem(m.group('item'), m.group('description')))
 
     def _add_tablerow(self, m):
         cells = [c for c in m.group('cells').split('|') if c != '']
