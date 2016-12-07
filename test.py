@@ -37,6 +37,12 @@ para2-2'''
         o = Org(text)
         eq_(str(o), 'Org(Heading1(Heading2(Heading3(Heading4(Heading5(Heading6()) Heading5())))))')
 
+    def test_slided_heading(self):
+        text = '''* Heading2
+** Heading3'''
+        o = Org(text, default_heading=2)
+        eq_(str(o), 'Org(Heading2(Heading3()))')
+
     def test_blockquote(self):
         text = '''#BEGIN_QUOTE: http://exapmle.com
 quoted line1
@@ -225,6 +231,23 @@ quoted
         o = Org(text)
         eq_(o.html(), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3</h3><blockquote>quoted</blockquote>')
 
+    def test_slide_heading_html(self):
+        text = '''* header1
+paraparapara
+** header2-1
+[[image]]
+para*para*2[[http://example.com][hyperlink]]
+** header2-2
+| a | b |
+| 1 | 2 |
+
+*** header3
+#BEGIN_QUOTE
+quoted
+#END_QUOTE'''
+        o = Org(text, default_heading=2)
+        eq_(o.html(), '<h2>header1</h2><p>paraparapara</p><h3>header2-1</h3><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h3>header2-2</h3><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h4>header3</h4><blockquote>quoted</blockquote>')
+
 
 class TestOrgToHTMLFunction(TestCase):
     def test_html(self):
@@ -242,6 +265,22 @@ para*para*2[[http://example.com][hyperlink]]
 quoted
 #END_QUOTE'''
         eq_(org_to_html(text), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3</h3><blockquote>quoted</blockquote>')
+
+    def test_slide_heading_html(self):
+        text = '''* header1
+paraparapara
+** header2-1
+[[image]]
+para*para*2[[http://example.com][hyperlink]]
+** header2-2
+| a | b |
+| 1 | 2 |
+
+*** header3
+#BEGIN_QUOTE
+quoted
+#END_QUOTE'''
+        eq_(org_to_html(text, default_heading=2), '<h2>header1</h2><p>paraparapara</p><h3>header2-1</h3><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h3>header2-2</h3><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h4>header3</h4><blockquote>quoted</blockquote>')
 
 
 

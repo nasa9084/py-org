@@ -226,8 +226,8 @@ class Blockquote(Node):
 
 class Heading(Node):
     '''Heading Class'''
-    def __init__(self, depth, title):
-        self.depth = depth
+    def __init__(self, depth, title, default_depth=1):
+        self.depth = depth + (default_depth -1)
         self.title = title
         super().__init__(br='')
         self.type_ = 'Heading{}'.format(self.depth)
@@ -398,12 +398,13 @@ class Org(object):
         'tablerow': compile(Syntax.TABLE_ROW),
     }
 
-    def __init__(self, text):
+    def __init__(self, text, default_heading=1):
         self.text = text
         self.children = []
         self.parent = self
         self.current = self
         self.bquote_flg = False
+        self.default_heading = default_heading
         self._parse(self.text)
 
     def __str__(self):
@@ -419,7 +420,8 @@ class Org(object):
                     self.current = self.current.parent
                 self._add_heading_node(Heading(
                     depth=len(m.group('level')),
-                    title=m.group('title')))
+                    title=m.group('title'),
+                    default_depth=self.default_heading))
             elif self.regexps['blockquote_begin'].match(line):
                 self.bquote_flg = True
                 m = self.regexps['blockquote_begin'].match(line)
@@ -540,5 +542,5 @@ class Org(object):
         return '\n'.join([child.html() for child in self.children])
 
 
-def org_to_html(text):
-    return Org(text).html()
+def org_to_html(text, default_heading=1):
+    return Org(text, default_heading).html()
