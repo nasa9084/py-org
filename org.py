@@ -491,7 +491,7 @@ class Org(object):
         self.current.append(DefinitionListItem(m.group('item'), m.group('description')))
 
     def _add_tablerow(self, m):
-        cells = [c for c in m.group('cells').split('|') if c!='']
+        cells = [c for c in m.group('cells').split('|') if c != '']
         if not isinstance(self.current, Table):
             tablenode = Table()
             self.current.append(tablenode)
