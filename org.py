@@ -481,8 +481,12 @@ class Org(object):
         self._add_list_node(m, listclass=UnOrderedList)
 
     def _add_dlist_node(self, m):
-        if ((isinstance(self.current, DefinitionList) and len(m.group('depth')) > self.current.depth) or
-            not isinstance(self.current, DefinitionList)):
+        is_definitionlist = isinstance(self.current, DefinitionList)
+        if is_definitionlist:
+            is_deeper = len(m.group('depth')) > self.current.depth
+        else:
+            is_deeper = False
+        if (is_definitionlist and is_deeper) or not is_definitionlist:
             listnode = DefinitionList(depth=len(m.group('depth')))
             self.current.append(listnode)
             self.current = listnode
