@@ -3,7 +3,7 @@ from re import compile
 
 class Syntax(object):
     LINK = r'\[\[(?P<url>https?://.+?)\](?:\[(?P<subject>.+?)\])?\]'
-    IMAGE= r'\[\[(?P<image>.+?)\](?:\[(?P<alt>.+?)\])?\]'
+    IMAGE = r'\[\[(?P<image>.+?)\](?:\[(?P<alt>.+?)\])?\]'
     BOLD = r'\*(?P<text>.+?)\*'
     ITALIC = r'/(?P<text>.+?)/'
     UNDERLINED = r'_(?P<text>.+?)_'
