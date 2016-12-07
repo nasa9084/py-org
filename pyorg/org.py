@@ -47,9 +47,7 @@ class Node(object):
 
     def html(self, br=''):
         '''Get HTML'''
-        inner = ''.join([child.html(br) for child in self.children])
-        if inner.endswith(br):
-            inner = inner[:-len(br)]
+        inner = br.join([child.html(br) for child in self.children])
         return ''.join([self._get_open(), inner,  self._get_close()])
 
     def _get_open(self):
@@ -123,7 +121,7 @@ class TerminalNode(object):
                 content += value.strip()
             else:
                 content += value.html(br)
-        return self._get_open() + content + self._get_close() + br
+        return self._get_open() + content + self._get_close()
 
     def _get_open(self):
         '''returns HTML open tag str'''
