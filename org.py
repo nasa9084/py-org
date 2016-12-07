@@ -447,7 +447,8 @@ class Org(object):
             elif not line:
                 if isinstance(self.current, Paragraph):
                     self.current = self.current.parent
-            elif not isinstance(self.current, Heading) and isinstance(self.current, Node):
+            elif (not isinstance(self.current, Heading) and
+                  isinstance(self.current, Node)):
                 self.current.append(Text(line))
             else:
                 node = Paragraph()
