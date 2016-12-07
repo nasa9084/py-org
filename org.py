@@ -108,7 +108,9 @@ class TerminalNode(object):
         else:
             before = after = None
             parsed = value
-        return (self._parse_value(before) or []) + [parsed] + (self._parse_value(after) or [])
+        before = self._parse_value(before) or []
+        after = self._parse_value(after) or []
+        return before + [parsed] + after
 
     def __str__(self):
         return self.type_
