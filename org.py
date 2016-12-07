@@ -486,7 +486,8 @@ class Org(object):
             listnode = DefinitionList(depth=len(m.group('depth')))
             self.current.append(listnode)
             self.current = listnode
-        while isinstance(self.current, DefinitionList) and len(m.group('depth')) < self.current.depth:
+        while (isinstance(self.current, DefinitionList) and
+               len(m.group('depth')) < self.current.depth):
             self.current = self.current.parent
         self.current.append(
             DefinitionListItem(m.group('item'), m.group('description')))
