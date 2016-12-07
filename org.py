@@ -82,28 +82,28 @@ class TerminalNode(object):
         if value is None:
             return ''
         if self.regexps['link'].search(value):
-            before, url, subject, after = self.regexps['link'].split(value, maxsplit=1)
+            before, url, subject, after = self.regexps['link'].split(value, 1)
             parsed = Link(url, subject)
         elif self.regexps['image'].search(value):
-            before, src, alt, after = self.regexps['image'].split(value, maxsplit=1)
+            before, src, alt, after = self.regexps['image'].split(value, 1)
             parsed = Image(src, alt)
         elif self.regexps['bold'].search(value):
-            before, text, after = self.regexps['bold'].split(value, maxsplit=1)
+            before, text, after = self.regexps['bold'].split(value, 1)
             parsed = BoldText(text)
         elif self.regexps['italic'].search(value):
-            before, text, after = self.regexps['italic'].split(value, maxsplit=1)
+            before, text, after = self.regexps['italic'].split(value, 1)
             parsed = ItalicText(text)
         elif self.regexps['underlined'].search(value):
-            before, text, after = self.regexps['underlined'].split(value, maxsplit=1)
+            before, text, after = self.regexps['underlined'].split(value, 1)
             parsed = UnderlinedText(text)
         elif self.regexps['linethrough'].search(value):
-            before, text, after = self.regexps['linethrough'].split(value, maxsplit=1)
+            before, text, after = self.regexps['linethrough'].split(value, 1)
             parsed = LinethroughText(text)
         elif self.regexps['code'].search(value):
-            before, text, after = self.regexps['code'].split(value, maxsplit=1)
+            before, text, after = self.regexps['code'].split(value, 1)
             parsed = InlineCodeText(text)
         elif self.regexps['monospace'].search(value):
-            before, text, after = self.regexps['monospace'].split(value, maxsplit=1)
+            before, text, after = self.regexps['monospace'].split(value, 1)
             parsed = MonospaceText(text)
         else:
             before = after = None
