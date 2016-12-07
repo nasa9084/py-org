@@ -412,7 +412,8 @@ class Org(object):
         for line in text:
             if self.regexps['heading'].match(line):
                 m = self.regexps['heading'].match(line)
-                while not (isinstance(self.current, Heading) or isinstance(self.current, Org)):
+                while (not isinstance(self.current, Heading) and
+                       not isinstance(self.current, Org)):
                     self.current = self.current.parent
                 self._add_heading_node(Heading(
                     depth=len(m.group('level')),
