@@ -1,4 +1,23 @@
-import re
+from re import compile
+
+
+class Syntax(object):
+    LINK = r'\[\[(?P<url>https?://.+?)\](?:\[(?P<subject>.+?)\])?\]'
+    IMAGE= r'\[\[(?P<image>.+?)\](?:\[(?P<alt>.+?)\])?\]'
+    BOLD = r'\*(?P<text>.+?)\*'
+    ITALIC = r'/(?P<text>.+?)/'
+    UNDERLINED = r'_(?P<text>.+?)_'
+    LINETHROUGH = r'\+(?P<text>.+?)\+'
+    CODE = r'=(?P<text>.+?)='
+    MONOSPACE = r'~(?P<text>.+?)~'
+    WHITELINE = r'\s*$'
+    HEADING = r'(?P<level>\*+)\s+(?P<title>.+)$'
+    QUOTE_BEGIN = r'#BEGIN_QUOTE(?P<c>:)?(?(c)\s+(?P<cite>.+)|)$'
+    QUOTE_END = r'#END_QUOTE$'
+    ORDERED_LIST = r'(?P<depth>\s*)\d+(\.|\))\s+(?P<item>.+)$'
+    UNORDERED_LIST = r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+)$'
+    DEFINITION_LIST = r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+?)\s*::\s*(?P<description>.+)$'
+    TABLE_ROW = r'\s*\|(?P<cells>(.+\|)+)s*$'
 
 
 class BaseError(Exception):
@@ -44,14 +63,14 @@ class Node(object):
 class TerminalNode(object):
     '''Base class of all terminal node'''
     regexps = {
-        'link': re.compile(r'\[\[(?P<url>https?://.+?)\](?:\[(?P<subject>.+?)\])?\]'),
-        'image': re.compile(r'\[\[(?P<image>.+?)\](?:\[(?P<alt>.+?)\])?\]'),
-        'bold': re.compile(r'\*(?P<text>.+?)\*'),
-        'italic': re.compile(r'/(?P<text>.+?)/'),
-        'underlined': re.compile(r'_(?P<text>.+?)_'),
-        'linethrough': re.compile(r'\+(?P<text>.+?)\+'),
-        'code': re.compile(r'=(?P<text>.+?)='),
-        'monospace': re.compile(r'~(?P<text>.+?)~')
+        'link': compile(Syntax.LINK),
+        'image': compile(Syntax.IMAGE),
+        'bold': compile(Syntax.BOLD),
+        'italic': compile(Syntax.ITALIC),
+        'underlined': compile(Syntax.UNDERLINED),
+        'linethrough': compile(Syntax.LINETHROUGH),
+        'code': compile(Syntax.CODE),
+        'monospace': compile(Syntax.MONOSPACE)
     }
 
     def __init__(self, value, parent=None):
@@ -367,14 +386,14 @@ class Image(TerminalNode):
 class Org(object):
     '''The org-mode object'''
     regexps = {
-        'whiteline': re.compile(r'\s*$'),
-        'heading': re.compile(r'(?P<level>\*+)\s+(?P<title>.+)$'),
-        'blockquote_begin': re.compile(r'#BEGIN_QUOTE(?P<c>:)?(?(c)\s+(?P<cite>.+)|)$'),
-        'blockquote_end': re.compile(r'#END_QUOTE$'),
-        'orderedlist': re.compile(r'(?P<depth>\s*)\d+(\.|\))\s+(?P<item>.+)$'),
-        'unorderedlist': re.compile(r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+)$'),
-        'definitionlist': re.compile(r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+?)\s*::\s*(?P<description>.+)$'),
-        'tablerow': re.compile(r'\s*\|(?P<cells>(.+\|)+)s*$'),
+        'whiteline': compile(Syntax.WHITELINE),
+        'heading': compile(Syntax.HEADING),
+        'blockquote_begin': compile(Syntax.QUOTE_BEGIN),
+        'blockquote_end': compile(Syntax.QUOTE_END),
+        'orderedlist': compile(Syntax.ORDERED_LIST),
+        'unorderedlist': compile(Syntax.UNORDERED_LIST),
+        'definitionlist': compile(Syntax.DEFINITION_LIST),
+        'tablerow': compile(Syntax.TABLE_ROW),
     }
 
     def __init__(self, text):
