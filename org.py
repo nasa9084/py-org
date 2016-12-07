@@ -457,20 +457,24 @@ class Org(object):
         if self.bquote_flg:
             raise NestingNotValidError
 
-    def _is_deeper(self, cls, depth):
-        if isinstance(self.current, cls):
+    def _is_deeper(self, cls, depth, eq=False):
+        if isinstance(self.current, cls) and not eq:
             return depth > self.current.depth
+        elif isinstance(self.current, cls) and eq:
+            return depth >= self.current.depth
         else:
             return False
 
-    def _is_shallower(self, cls, depth):
-        if isinstance(self.current, cls):
+    def _is_shallower(self, cls, depth, eq=False):
+        if isinstance(self.current, cls) and not eq:
             return depth < self.current.depth
+        elif isinstance(self.current, cls) and eq:
+            return depth <= self.current.depth
         else:
             return False
 
     def _add_heading_node(self, heading):
-        while isinstance(self.current, Heading) and self.current.depth >= heading.depth:
+        while self._is_shallower(Heading, heading.depth, eq=True):
             self.current = self.current.parent
         self.current.append(heading)
         self.current = heading
