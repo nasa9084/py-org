@@ -48,7 +48,9 @@ class Node(object):
     def html(self, br=''):
         '''Get HTML'''
         inner = ''.join([child.html(br) for child in self.children])
-        return br.join([self._get_open(), inner,  self._get_close()])
+        if inner.endswith(br):
+            inner = inner[:-len(br)]
+        return ''.join([self._get_open(), inner,  self._get_close()])
 
     def _get_open(self):
         '''returns HTML open tag str'''
@@ -233,8 +235,8 @@ class Heading(Node):
 
     def html(self, br=''):
         heading = self._get_open() + self.title + self._get_close()
-        content = br.join([child.html() for child in self.children])
-        return heading + br + content + br
+        content = ''.join([child.html(br) for child in self.children])
+        return heading + content
 
     def _get_open(self):
         return '<h{}>'.format(self.depth)
