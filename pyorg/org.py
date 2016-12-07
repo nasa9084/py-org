@@ -30,11 +30,10 @@ class NestingNotValidError(BaseError):
 
 class Node(object):
     '''Base class of all node'''
-    def __init__(self, parent=None, br=''):
+    def __init__(self, parent=None):
         self.type_ = self.__class__.__name__
         self.children = []
         self.parent = parent
-        self.br = br
 
     def __str__(self):
         str_children = [str(child) for child in self.children]
@@ -46,10 +45,10 @@ class Node(object):
         self.children.append(child)
         child.parent = self
 
-    def html(self):
+    def html(self, br=''):
         '''Get HTML'''
-        inner = ''.join([child.html() for child in self.children])
-        return self.br.join([self._get_open(), inner,  self._get_close()])
+        inner = ''.join([child.html(br) for child in self.children])
+        return br.join([self._get_open(), inner,  self._get_close()])
 
     def _get_open(self):
         '''returns HTML open tag str'''
@@ -121,7 +120,7 @@ class TerminalNode(object):
             if isinstance(value, str):
                 content += value.strip()
             else:
-                content += value.html()
+                content += value.html(br)
         return self._get_open() + content + self._get_close() + br
 
     def _get_open(self):
@@ -229,13 +228,13 @@ class Heading(Node):
     def __init__(self, depth, title, default_depth=1):
         self.depth = depth + (default_depth -1)
         self.title = title
-        super().__init__(br='')
+        super().__init__()
         self.type_ = 'Heading{}'.format(self.depth)
 
-    def html(self):
+    def html(self, br=''):
         heading = self._get_open() + self.title + self._get_close()
-        content = ''.join([child.html() for child in self.children])
-        return heading + content
+        content = br.join([child.html() for child in self.children])
+        return heading + br + content + br
 
     def _get_open(self):
         return '<h{}>'.format(self.depth)
@@ -378,11 +377,11 @@ class Image(TerminalNode):
         self.src = src
         super().__init__(alt)
 
-    def html(self):
+    def html(self, br=''):
         if self.values:
-            return '<img src="{}" alt="{}">'.format(self.src, self.values[0])
+            return '<img src="{}" alt="{}">'.format(self.src, self.values[0]) + br
         else:
-            return '<img src="{}">'.format(self.src)
+            return '<img src="{}">'.format(self.src) + br
 
 
 class Org(object):
@@ -538,9 +537,9 @@ class Org(object):
         self.children.append(child)
         child.parent = self
 
-    def html(self):
-        return '\n'.join([child.html() for child in self.children])
+    def html(self, br=''):
+        return '\n'.join([child.html(br) for child in self.children])
 
 
-def org_to_html(text, default_heading=1):
-    return Org(text, default_heading).html()
+def org_to_html(text, default_heading=1, newline=''):
+    return Org(text, default_heading).html(newline)
