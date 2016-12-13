@@ -248,6 +248,16 @@ quoted
         o = Org(text, default_heading=2)
         eq_(o.html(), '<h2>header1</h2><p>paraparapara</p><h3>header2-1</h3><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h3>header2-2</h3><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h4>header3</h4><blockquote>quoted</blockquote>')
 
+    def test_inlinecode(self):
+        text = '=inline text='
+        o = Org(text)
+        eq_(o.html(), '<p><code>inline text</code></p>')
+        text = '=/inline italic text/='
+        o = Org(text)
+        eq_(o.html(), '<p><code>/inline italic text/</code></p>')
+        text = '=<tag>='
+        o = Org(text)
+        eq_(o.html(), '<p><code>&lt;tag&gt;</code></p>')
 
 class TestOrgToHTMLFunction(TestCase):
     def test_html(self):
