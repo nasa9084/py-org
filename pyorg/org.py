@@ -80,7 +80,11 @@ class TerminalNode(object):
     def _parse_value(self, value):
         if value is None:
             return ''
-        if self.regexps['link'].search(value):
+
+        if self.regexps['code'].search(value):
+            before, text, after = self.regexps['code'].split(value, 1)
+            parsed = InlineCodeText(text)
+        elif self.regexps['link'].search(value):
             before, url, subject, after = self.regexps['link'].split(value, 1)
             parsed = Link(url, subject)
         elif self.regexps['image'].search(value):
@@ -98,9 +102,6 @@ class TerminalNode(object):
         elif self.regexps['linethrough'].search(value):
             before, text, after = self.regexps['linethrough'].split(value, 1)
             parsed = LinethroughText(text)
-        elif self.regexps['code'].search(value):
-            before, text, after = self.regexps['code'].split(value, 1)
-            parsed = InlineCodeText(text)
         elif self.regexps['monospace'].search(value):
             before, text, after = self.regexps['monospace'].split(value, 1)
             parsed = MonospaceText(text)
@@ -191,6 +192,22 @@ class LinethroughText(Text):
 
 class InlineCodeText(Text):
     '''Inline Code Text Class'''
+    less_than = compile(r'<')
+    greater_than = compile(r'>')
+    def _parse_value(self, value):
+        return [value]
+
+    def html(self, br=''):
+        content = ''
+        for value in self.values:
+            if isinstance(value, str):
+                content += value.strip()
+            else:
+                content += value.html(br)
+        content = self.less_than.sub('&lt;', content)
+        content = self.greater_than.sub('&gt;', content)
+        return self._get_open() + content + self._get_close()
+
     def _get_open(self):
         return '<code>'
 
