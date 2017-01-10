@@ -14,6 +14,8 @@ class Syntax(object):
     HEADING = r'(?P<level>\*+)\s+(?P<title>.+)$'
     QUOTE_BEGIN = r'#BEGIN_QUOTE(?P<c>:)?(?(c)\s+(?P<cite>.+)|)$'
     QUOTE_END = r'#END_QUOTE$'
+    SRC_BEGIN = r'#BEGIN_SRC(?P<spc> )?(?(spc)\s*(?P<src_type>.+)|)$'
+    SRC_END = r'#END_SRC'
     ORDERED_LIST = r'(?P<depth>\s*)\d+(\.|\))\s+(?P<item>.+)$'
     UNORDERED_LIST = r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+)$'
     DEF_LIST = r'(?P<depth>\s*)(-|\+)\s+(?P<item>.+?)\s*::\s*(?P<desc>.+)$'
@@ -72,8 +74,9 @@ class TerminalNode(object):
         'monospace': compile(Syntax.MONOSPACE)
     }
 
-    def __init__(self, value, parent=None):
+    def __init__(self, value, parent=None, noparse=False):
         self.type_ = self.__class__.__name__
+        self.noparse = noparse
         self.values = self._parse_value(value)
         self.parent = parent
 
@@ -81,7 +84,10 @@ class TerminalNode(object):
         if value is None:
             return ''
 
-        if self.regexps['code'].search(value):
+        if self.noparse:
+            before = after = None
+            parsed = value
+        elif self.regexps['code'].search(value):
             before, text, after = self.regexps['code'].split(value, 1)
             parsed = InlineCodeText(text)
         elif self.regexps['link'].search(value):
@@ -238,6 +244,22 @@ class Blockquote(Node):
 
     def _get_close(self):
         return '</blockquote>'
+
+
+class CodeBlock(Node):
+    ''' Block class Code Class '''
+    def __init__(self, src_type=None):
+        self.src_type = src_type
+        super().__init__()
+
+    def _get_open(self):
+        if self.src_type:
+            return '<pre><code class="{}">'.format(self.src_type)
+        else:
+            return '<pre><code>'
+
+    def _get_close(self):
+        return '</code></pre>'
 
 
 class Heading(Node):
@@ -408,6 +430,8 @@ class Org(object):
         'heading': compile(Syntax.HEADING),
         'blockquote_begin': compile(Syntax.QUOTE_BEGIN),
         'blockquote_end': compile(Syntax.QUOTE_END),
+        'src_begin': compile(Syntax.SRC_BEGIN),
+        'src_end': compile(Syntax.SRC_END),
         'orderedlist': compile(Syntax.ORDERED_LIST),
         'unorderedlist': compile(Syntax.UNORDERED_LIST),
         'definitionlist': compile(Syntax.DEF_LIST),
@@ -420,6 +444,7 @@ class Org(object):
         self.parent = self
         self.current = self
         self.bquote_flg = False
+        self.src_flg = False
         self.default_heading = default_heading
         self._parse(self.text)
 
@@ -429,6 +454,9 @@ class Org(object):
     def _parse(self, text):
         text = text.splitlines()
         for line in text:
+            if self.src_flg and not self.regexps['src_end'].match(line):
+                self.current.append(Text(line, noparse=True))
+                continue
             if self.regexps['heading'].match(line):
                 m = self.regexps['heading'].match(line)
                 while (not isinstance(self.current, Heading) and
@@ -449,6 +477,21 @@ class Org(object):
                     raise NestingNotValidError
                 self.bquote_flg = False
                 while not isinstance(self.current, Blockquote):
+                    if isinstance(self.current, Org):
+                        raise NestingNotValidError
+                    self.current = self.current.parent
+                self.current = self.current.parent
+            elif self.regexps['src_begin'].match(line):
+                self.src_flg = True
+                m = self.regexps['src_begin'].match(line)
+                node = CodeBlock(src_type=m.group('src_type'))
+                self.current.append(node)
+                self.current = node
+            elif self.regexps['src_end'].match(line):
+                if not self.src_flg:
+                    raise NestingNotValidError
+                self.src_flg = False
+                while not isinstance(self.current, CodeBlock):
                     if isinstance(self.current, Org):
                         raise NestingNotValidError
                     self.current = self.current.parent
@@ -476,7 +519,7 @@ class Org(object):
                 self.current.append(node)
                 self.current = node
                 self.current.append(Text(line))
-        if self.bquote_flg:
+        if self.bquote_flg or self.src_flg:
             raise NestingNotValidError
 
     def _is_deeper(self, cls, depth, eq=False):

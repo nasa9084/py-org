@@ -51,6 +51,13 @@ quoted line2
         o = Org(text)
         eq_(str(o), 'Org(Blockquote(Text Text))')
 
+    def test_blockquote_with_some_decoration(self):
+        text = '''#BEGIN_QUOTE
+=quoted line=
+#END_QUOTE'''
+        o = Org(text)
+        eq_(str(o), 'Org(Blockquote(Text))')
+
     @raises(NestingNotValidError)
     def test_openless_blockquote(self):
         text = '''#END_QUOTE'''
@@ -59,6 +66,40 @@ quoted line2
     @raises(NestingNotValidError)
     def test_endless_blockquote(self):
         text = '''#BEGIN_QUOTE'''
+        Org(text)
+
+    def test_src(self):
+        text = '''#BEGIN_SRC
+source code
+source code
+#END_SRC'''
+        o = Org(text)
+        eq_(str(o), 'Org(CodeBlock(Text Text))')
+
+    def test_src_with_type(self):
+        text = '''#BEGIN_SRC python
+source code
+source code
+#END_SRC'''
+        o = Org(text)
+        eq_(str(o), 'Org(CodeBlock(Text Text))')
+
+    def test_src_with_some_decoration(self):
+        text = '''#BEGIN_SRC
+=source code=
++source code+
+#END_SRC'''
+        o = Org(text)
+        eq_(str(o), 'Org(CodeBlock(Text Text))')
+
+    @raises(NestingNotValidError)
+    def test_openless_src(self):
+        text = '''#END_SRC'''
+        Org(text)
+
+    @raises(NestingNotValidError)
+    def test_endless_src(self):
+        text = '''#BEGIN_SRC'''
         Org(text)
 
     def test_orderedlist(self):
@@ -224,12 +265,19 @@ para*para*2[[http://example.com][hyperlink]]
 | a | b |
 | 1 | 2 |
 
-*** header3
+*** header3-1
 #BEGIN_QUOTE
 quoted
-#END_QUOTE'''
+=quoted_decorated=
+#END_QUOTE
+
+*** header3-2
+#BEGIN_SRC python
+python code
+=hoge=
+#END_SRC'''
         o = Org(text)
-        eq_(o.html(), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3</h3><blockquote>quoted</blockquote>')
+        eq_(o.html(), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3-1</h3><blockquote>quoted<code>quoted_decorated</code></blockquote><h3>header3-2</h3><pre><code class="python">python code=hoge=</code></pre>')
 
     def test_slide_heading_html(self):
         text = '''* header1
