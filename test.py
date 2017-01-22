@@ -44,62 +44,62 @@ para2-2'''
         eq_(str(o), 'Org(Heading2(Heading3()))')
 
     def test_blockquote(self):
-        text = '''#BEGIN_QUOTE: http://exapmle.com
+        text = '''#+BEGIN_QUOTE: http://exapmle.com
 quoted line1
 quoted line2
-#END_QUOTE'''
+#+END_QUOTE'''
         o = Org(text)
         eq_(str(o), 'Org(Blockquote(Text Text))')
 
     def test_blockquote_with_some_decoration(self):
-        text = '''#BEGIN_QUOTE
+        text = '''#+BEGIN_QUOTE
 =quoted line=
-#END_QUOTE'''
+#+END_QUOTE'''
         o = Org(text)
         eq_(str(o), 'Org(Blockquote(Text))')
 
     @raises(NestingNotValidError)
     def test_openless_blockquote(self):
-        text = '''#END_QUOTE'''
+        text = '''#+END_QUOTE'''
         Org(text)
 
     @raises(NestingNotValidError)
     def test_endless_blockquote(self):
-        text = '''#BEGIN_QUOTE'''
+        text = '''#+BEGIN_QUOTE'''
         Org(text)
 
     def test_src(self):
-        text = '''#BEGIN_SRC
+        text = '''#+BEGIN_SRC
 source code
 source code
-#END_SRC'''
+#+END_SRC'''
         o = Org(text)
         eq_(str(o), 'Org(CodeBlock(Text Text))')
 
     def test_src_with_type(self):
-        text = '''#BEGIN_SRC python
+        text = '''#+BEGIN_SRC python
 source code
 source code
-#END_SRC'''
+#+END_SRC'''
         o = Org(text)
         eq_(str(o), 'Org(CodeBlock(Text Text))')
 
     def test_src_with_some_decoration(self):
-        text = '''#BEGIN_SRC
+        text = '''#+BEGIN_SRC
 =source code=
 +source code+
-#END_SRC'''
+#+END_SRC'''
         o = Org(text)
         eq_(str(o), 'Org(CodeBlock(Text Text))')
 
     @raises(NestingNotValidError)
     def test_openless_src(self):
-        text = '''#END_SRC'''
+        text = '''#+END_SRC'''
         Org(text)
 
     @raises(NestingNotValidError)
     def test_endless_src(self):
-        text = '''#BEGIN_SRC'''
+        text = '''#+BEGIN_SRC'''
         Org(text)
 
     def test_orderedlist(self):
@@ -130,7 +130,7 @@ source code
         o = Org(text)
         eq_(str(o), 'Org(UnOrderedList(ListItem ListItem ListItem ListItem))')
 
-    def text_nested_unorderedlist(self):
+    def test_nested_unorderedlist(self):
         text = '''- listitem1
 - listitem2
   + shallowitem1
@@ -245,11 +245,11 @@ para*para*2[[http://example.com][hyperlink]]
 | 1 | 2 |
 
 *** header3
-#BEGIN_QUOTE
+#+BEGIN_QUOTE
 quoted
 - hoge
 - fuga
-#END_QUOTE'''
+#+END_QUOTE'''
         o = Org(text)
         eq_(str(o), 'Org(Heading1(Paragraph(Text) Heading2(Paragraph(Text Text)) Heading2(Table(TableRow(TableCell(Text) TableCell(Text)) TableRow(TableCell(Text) TableCell(Text))) Heading3(Blockquote(Text UnOrderedList(ListItem ListItem))))))')
 
@@ -266,16 +266,16 @@ para*para*2[[http://example.com][hyperlink]]
 | 1 | 2 |
 
 *** header3-1
-#BEGIN_QUOTE
+#+BEGIN_QUOTE
 quoted
 =quoted_decorated=
-#END_QUOTE
+#+END_QUOTE
 
 *** header3-2
-#BEGIN_SRC python
+#+BEGIN_SRC python
 python code
 =hoge=
-#END_SRC'''
+#+END_SRC'''
         o = Org(text)
         eq_(o.html(), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3-1</h3><blockquote>quoted<code>quoted_decorated</code></blockquote><h3>header3-2</h3><pre><code class="python">python code=hoge=</code></pre>')
 
@@ -290,9 +290,9 @@ para*para*2[[http://example.com][hyperlink]]
 | 1 | 2 |
 
 *** header3
-#BEGIN_QUOTE
+#+BEGIN_QUOTE
 quoted
-#END_QUOTE'''
+#+END_QUOTE'''
         o = Org(text, default_heading=2)
         eq_(o.html(), '<h2>header1</h2><p>paraparapara</p><h3>header2-1</h3><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h3>header2-2</h3><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h4>header3</h4><blockquote>quoted</blockquote>')
 
@@ -319,9 +319,9 @@ para*para*2[[http://example.com][hyperlink]]
 | 1 | 2 |
 
 *** header3
-#BEGIN_QUOTE
+#+BEGIN_QUOTE
 quoted
-#END_QUOTE'''
+#+END_QUOTE'''
         eq_(org_to_html(text), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3</h3><blockquote>quoted</blockquote>')
 
     def test_slide_heading_html(self):
@@ -335,9 +335,9 @@ para*para*2[[http://example.com][hyperlink]]
 | 1 | 2 |
 
 *** header3
-#BEGIN_QUOTE
+#+BEGIN_QUOTE
 quoted
-#END_QUOTE'''
+#+END_QUOTE'''
         eq_(org_to_html(text, default_heading=2), '<h2>header1</h2><p>paraparapara</p><h3>header2-1</h3><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h3>header2-2</h3><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h4>header3</h4><blockquote>quoted</blockquote>')
 
 
