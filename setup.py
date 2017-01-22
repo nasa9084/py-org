@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='pyorg',
     packages=['pyorg'],
-    version='0.1.5',
+    version='0.1.6',
     description='The org-mode parser fro python',
     author='nasa9084',
     author_email='nasa.9084.bassclarinet@gmail.com',

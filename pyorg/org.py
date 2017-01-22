@@ -125,7 +125,7 @@ class TerminalNode(object):
         content = ''
         for value in self.values:
             if isinstance(value, str):
-                content += value.strip()
+                content += value.rstrip()
             else:
                 content += value.html(br)
         return self._get_open() + content + self._get_close()
