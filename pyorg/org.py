@@ -47,9 +47,9 @@ class Node(object):
         self.children.append(child)
         child.parent = self
 
-    def html(self, br=''):
+    def html(self, br='', lstrip=False):
         '''Get HTML'''
-        inner = br.join([child.html(br) for child in self.children])
+        inner = br.join([child.html(br, lstrip) for child in self.children])
         return ''.join([self._get_open(), inner,  self._get_close()])
 
     def _get_open(self):
@@ -121,11 +121,14 @@ class TerminalNode(object):
     def __str__(self):
         return self.type_
 
-    def html(self, br=''):
+    def html(self, br='', lstrip=False):
         content = ''
         for value in self.values:
             if isinstance(value, str):
-                content += value.rstrip()
+                if lstrip:
+                    content += value.strip()
+                else:
+                    content += value.rstrip()
             else:
                 content += value.html(br)
         return self._get_open() + content + self._get_close()
@@ -388,6 +391,11 @@ class TableRow(Node):
 
 class TableCell(Node):
     '''Table Cell Class'''
+    def html(self, br='', lstrip=False):
+        '''Get HTML'''
+        inner = br.join([child.html(br, True) for child in self.children])
+        return ''.join([self._get_open(), inner,  self._get_close()])
+
     def _get_open(self):
         return '<td>'
 
