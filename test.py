@@ -349,7 +349,7 @@ paraparapara
 hogehogehoge
 - list1
 - list2'''
-        eq_(org_to_html(text, newline='\n'), '<h1>header1</h1><p>paraparapara\nhogehogehoge\n<ul><li>list1</li><li>list2</li></ul></p>')
+        eq_(org_to_html(text, newline='\n'), '<h1>header1</h1><p>paraparapara\nhogehogehoge</p><ul><li>list1</li><li>list2</li></ul>')
 
 
 

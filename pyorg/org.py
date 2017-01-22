@@ -508,12 +508,18 @@ class Org(object):
                     self.current = self.current.parent
                 self.current = self.current.parent
             elif self.regexps['orderedlist'].match(line):
+                while isinstance(self.current, Paragraph):
+                    self.current = self.current.parent
                 m = self.regexps['orderedlist'].match(line)
                 self._add_olist_node(m)
             elif self.regexps['definitionlist'].match(line):
+                while isinstance(self.current, Paragraph):
+                    self.current = self.current.parent
                 m = self.regexps['definitionlist'].match(line)
                 self._add_dlist_node(m)
             elif self.regexps['unorderedlist'].match(line):
+                while isinstance(self.current, Paragraph):
+                    self.current = self.current.parent
                 m = self.regexps['unorderedlist'].match(line)
                 self._add_ulist_node(m)
             elif self.regexps['tablerow'].match(line):
@@ -609,7 +615,7 @@ class Org(object):
         child.parent = self
 
     def html(self, br=''):
-        return '\n'.join([child.html(br) for child in self.children])
+        return br.join([child.html(br) for child in self.children])
 
 
 def org_to_html(text, default_heading=1, newline=''):
