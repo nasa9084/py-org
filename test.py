@@ -318,11 +318,14 @@ para*para*2[[http://example.com][hyperlink]]
 | a | b |
 | 1 | 2 |
 
-*** header3
+*** header3-1
 #+BEGIN_QUOTE
 quoted
-#+END_QUOTE'''
-        eq_(org_to_html(text), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3</h3><blockquote>quoted</blockquote>')
+#+END_QUOTE
+*** header3-2
+- hoge
+- fuga'''
+        eq_(org_to_html(text), '<h1>header1</h1><p>paraparapara</p><h2>header2-1</h2><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h2>header2-2</h2><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h3>header3-1</h3><blockquote>quoted</blockquote><h3>header3-2</h3><ul><li>hoge</li><li>fuga</li></ul>')
 
     def test_slide_heading_html(self):
         text = '''* header1
@@ -339,6 +342,14 @@ para*para*2[[http://example.com][hyperlink]]
 quoted
 #+END_QUOTE'''
         eq_(org_to_html(text, default_heading=2), '<h2>header1</h2><p>paraparapara</p><h3>header2-1</h3><p><img src="image">para<span style="font-weight: bold;">para</span>2<a href="http://example.com">hyperlink</a></p><h3>header2-2</h3><table><tr><td>a</td><td>b</td></tr><tr><td>1</td><td>2</td></tr></table><h4>header3</h4><blockquote>quoted</blockquote>')
+
+    def test_newline_html(self):
+        text = '''* header1
+paraparapara
+hogehogehoge
+- list1
+- list2'''
+        eq_(org_to_html(text, newline='\n'), '<h1>header1</h1><p>paraparapara\nhogehogehoge\n<ul><li>list1</li><li>list2</li></ul></p>')
 
 
 

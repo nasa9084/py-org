@@ -295,6 +295,9 @@ class List(Node):
             self.start = start
         super().__init__()
 
+    def html(self, br='', lstrip=False):
+        return super().html('', lstrip)
+
 
 class ListItem(TerminalNode):
     '''List Item Class'''
