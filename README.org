@@ -1,4 +1,5 @@
 * py-org
+[[https://travis-ci.org/nasa9084/py-org.svg?branch=master]]
 The org-mode parser for python
 
 ** Supported Feature
@@ -99,7 +100,7 @@ quoted text with cite
   + bar :: bar is bar
   + baz :: baz is baz
 #+END_SRC
-  
+
 
 *** Table
 #+BEGIN_SRC org
